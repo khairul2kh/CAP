@@ -375,6 +375,7 @@ public class BillingService {
 
         //  File outputFileBillId = new File("F:\\tomcat6(OpenMRS)\\webapps\\CURE_AND_PREVENTS_V2_Final\\barcode/" + dpsb.getBillId() + ".png"); // Local
         //  File file = new File(request.getSession().getServletContext().getRealPath("/WEB-INF/view/module/radiology/file/" + testName + ".txt"));
+       //this is for git test
         File outputFileBillId = new File(request.getSession().getServletContext().getRealPath("/barcode/" + dpsb.getBillId() + ".png"));
 
         OutputStream outB = new FileOutputStream(outputFileBillId);
