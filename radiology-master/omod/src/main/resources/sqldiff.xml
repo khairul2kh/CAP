@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqldiff PUBLIC "-//OpenMRS//DTD OpenMRS SQL Diff Config 1.0//EN" "http://resources.openmrs.org/doctype/sqldiff-1.0.dtd">
+
+<sqldiff version="1.0">
+	<help>
+		USE:
+		The diffs are ordered by datamodel version number.
+		The script
+		can be run in a top down fashion and is
+		expected to not failor
+		overwrite old data
+
+		EXPECT:
+		- "use business-database-name;" was called
+		prior to
+		calling this script
+	</help>
+	<diff>
+		<version>0.1</version>
+		<author>Truong Ha</author>
+		<date>May 24th 2011</date>
+		<description>
+			Create tables RadiologyTest
+		</description>
+		<sql>
+			CREATE TABLE IF NOT EXISTS `radiology_test` (
+			`test_id` int(11)
+			NOT NULL AUTO_INCREMENT,
+			`encounter_id` int(11) DEFAULT NULL,
+			`patient_id` int(11) DEFAULT NULL,
+			`order_id` int(11) DEFAULT NULL,
+			`concept_id` int(11) DEFAULT NULL,
+			`status` varchar(30) DEFAULT NULL,
+			`date` datetime DEFAULT NULL,
+			`creator` int(11) DEFAULT NULL,
+			PRIMARY
+			KEY (`test_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</sql>
+	</diff>
+	<diff>
+		<version>0.2</version>
+		<author>Truong Ha</author>
+		<date>May 24th 2011</date>
+		<description> Create table RadiologyForm </description>
+		<sql>
+			CREATE TABLE IF NOT EXISTS `radiology_form` (
+			  `form_id` int(11) NOT NULL AUTO_INCREMENT,
+			  `name` varchar(30) NOT NULL DEFAULT '',
+			  `description` varchar(300) NOT NULL DEFAULT '',
+			  `content` varchar(10240) NOT NULL DEFAULT '',
+			  `concept_id` int(11) DEFAULT NULL,
+			  PRIMARY KEY (`form_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;			
+			ALTER TABLE radiology_test ADD radiology_form_id int(11) DEFAULT NULL;
+		</sql>
+	</diff>
+	<diff>
+		<version>0.3</version>
+		<author>Truong Ha</author>
+		<date>June 22th 2011</date>
+		<description>
+			Change column name encounter_id to given_encounter_id in radiology_test;
+			Add column not_given_encounter_id into radiology_test;
+			Add column type into table radiology_form;
+			Add column concept_name into table radiology_form;
+		</description>
+		<sql>
+			ALTER TABLE radiology_test CHANGE encounter_id given_encounter_id int(11);
+			ALTER TABLE radiology_test ADD not_given_encounter_id int(11) DEFAULT NULL;
+			ALTER TABLE radiology_test CHANGE radiology_form_id given_form_id int(11);			
+			ALTER TABLE radiology_test ADD not_given_form_id int(11) DEFAULT NULL;			
+			ALTER TABLE radiology_form ADD type varchar(30) DEFAULT NULL;
+			ALTER TABLE radiology_form ADD concept_name varchar(300) DEFAULT NULL;
+		</sql>
+	</diff>
+	<diff>
+		<version>0.4</version>
+		<author>Truong Ha</author>
+		<date>July 11th 2011</date>
+		<description>
+			Change the size of column content in table radiology_form
+		</description>
+		<sql>
+			ALTER TABLE radiology_form MODIFY `content` varchar(20480) NOT NULL DEFAULT ''; 
+		</sql>
+	</diff>
+	<diff>
+		<version>0.5</version>
+		<author>Truong Ha</author>
+		<date>July 19th 2011</date>
+		<description>
+			Drop columns type, not_given_encounter_id, not_given_form_id in table radiology_form;
+			Rename columns given_form_id, given_encounter_id to form_id, encounter_id;
+			Add table radiology_template, radiology_template_test
+		</description>
+		<sql>
+			ALTER TABLE radiology_form DROP COLUMN `type`;
+			ALTER TABLE radiology_test DROP COLUMN `not_given_encounter_id`; 
+			ALTER TABLE radiology_test DROP COLUMN `not_given_form_id`;
+			ALTER TABLE radiology_test CHANGE `given_form_id` `form_id` int(11) DEFAULT NULL;
+			ALTER TABLE radiology_test CHANGE `given_encounter_id` `encounter_id` int(11) DEFAULT NULL;  
+			
+			CREATE TABLE IF NOT EXISTS `radiology_template` (
+			  `template_id` int(11) NOT NULL AUTO_INCREMENT,
+			  `name` varchar(200) DEFAULT NULL,
+			  `description` varchar(300) DEFAULT NULL,
+			  `content` varchar(10240) DEFAULT NULL,
+			  PRIMARY KEY (`template_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			
+			CREATE TABLE IF NOT EXISTS `radiology_template_test` (
+			  `template_id` int(11) NOT NULL,
+			  `concept_id` int(11) NOT NULL,
+			  PRIMARY KEY (`template_id`, `concept_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</sql>
+	</diff>
+	<diff>
+		<version>0.6</version>
+		<author>Truong Ha</author>
+		<date>July 26th 2011</date>
+		<description>
+			Change the length of column name
+		</description>
+		<sql>
+			ALTER TABLE radiology_form MODIFY `name` varchar(120) DEFAULT NULL; 
+		</sql>
+	</diff>
+</sqldiff>

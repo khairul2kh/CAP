@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module configVersion="1.2">
+
+    <!-- Module Properties -->
+    <id>pharmacy</id>
+    <name>Pharmacy Module</name>
+    <version>1.0.1</version>
+    <package>org.openmrs.module.pharmacy</package>
+    <author>Khairul</author>
+    <description>
+        Pharmacy Management Module
+    </description>
+    <updateURL>https://modules.openmrs.org/modules/download/pharmacy/update.rdf</updateURL>
+    <require_version>1.8.0</require_version>
+    <!-- / Module Properties -->
+
+	
+    <!-- Module Activator -->
+    <activator>org.openmrs.module.pharmacy.PharmacyActivator</activator>
+	
+	
+    <!-- Adds link to admin page -->
+    <extension>
+        <point>org.openmrs.admin.list</point>
+        <class>org.openmrs.module.pharmacy.extension.html.AdminList</class>
+    </extension>
+        
+    <extension>
+        <point>org.openmrs.gutter.tools</point>
+        <class>org.openmrs.module.pharmacy.extension.html.PharmacyHeader</class>
+    </extension>
+    
+    <privilege>
+        <name>View Pharmacy Module</name>
+        <description>Allows user to View Pharmacy Module</description>
+    </privilege>
+	
+    <!-- Maps hibernate file's, if present -->
+    <mappingFiles>
+				
+        Pharmacy.hbm.xml
+				
+    </mappingFiles>
+
+    <!-- Internationalization -->
+    <!-- All message codes should start with pharmacy. -->
+    <messages>
+        <lang>en</lang>
+        <file>messages.properties</file>
+    </messages>
+    <messages>
+        <lang>fr</lang>
+        <file>messages_fr.properties</file>
+    </messages>
+    <messages>
+        <lang>es</lang>
+        <file>messages_es.properties</file>
+    </messages>
+    <messages>
+        <lang>ban</lang>
+        <file>messages_ban.properties</file>
+    </messages>
+    <!-- /Internationalization -->
+
+</module>
+

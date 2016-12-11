@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module configVersion="1.2">
+
+    <!-- Module Properties -->
+    <id>${project.parent.artifactId}</id>
+    <name>${project.parent.name}</name>
+    <version>${project.parent.version}</version>
+    <package>${project.parent.groupId}.${project.parent.artifactId}</package>
+    <author>Khairul</author>
+    <description>
+        ${project.parent.description}
+    </description>
+    <updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
+    <require_version>${openMRSVersion}</require_version>
+    <!-- / Module Properties -->
+
+	
+    <!-- Module Activator -->
+    <activator>${project.parent.groupId}.${project.parent.artifactId}.PharmacyActivator</activator>
+	
+	
+    <!-- Adds link to admin page -->
+    <extension>
+        <point>org.openmrs.admin.list</point>
+        <class>@MODULE_PACKAGE@.extension.html.AdminList</class>
+    </extension>
+        
+    <extension>
+        <point>org.openmrs.gutter.tools</point>
+        <class>@MODULE_PACKAGE@.extension.html.PharmacyHeader</class>
+    </extension>
+    
+    <privilege>
+        <name>View Pharmacy Module</name>
+        <description>Allows user to View Pharmacy Module</description>
+    </privilege>
+	
+    <!-- Maps hibernate file's, if present -->
+    <mappingFiles>
+				
+        Pharmacy.hbm.xml
+				
+    </mappingFiles>
+
+    <!-- Internationalization -->
+    <!-- All message codes should start with ${project.parent.artifactId}. -->
+    <messages>
+        <lang>en</lang>
+        <file>messages.properties</file>
+    </messages>
+    <messages>
+        <lang>fr</lang>
+        <file>messages_fr.properties</file>
+    </messages>
+    <messages>
+        <lang>es</lang>
+        <file>messages_es.properties</file>
+    </messages>
+    <messages>
+        <lang>ban</lang>
+        <file>messages_ban.properties</file>
+    </messages>
+    <!-- /Internationalization -->
+
+</module>
+

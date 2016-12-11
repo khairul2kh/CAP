@@ -1,0 +1,151 @@
+1.4.8
+New Requirement #274: [RADIOLOGY] - WorkList of Patients in Alphabetical Order
+New Requirement #310: [RADIOLOGY] Generate Consolidated Work List
+New Requirement #315: [RADIOLOGY] Advanced Search in Patient Report
+New Requirement #322: [RADIOLOGY] Make Consolidated Work List an Option in the investigation drop down list
+
+1.4.7
+- Fixed high priority bugs detected by Jenkins 
+- Resolved issues
+	Bug #111: Hamirpur Radiology USG Pelvis
+	Bug #223: 1.4.7-SNAPSHOT Punjab Forms and global properties
+	Bug #279: Mohali- Deafault X ray Form
+	Bug #280: Mohali- Default Form
+	Bug #281: Mohli-Enter Result
+	Bug #282: Mohali-Edit Result
+	Bug #283: Mohali-Print Report
+	Bug #284: Solan-Pateint Report
+	Bug #288: Mohali-X-Ray default Form , Patient report
+	Support #237: [1.4.7- SNAPSHOT] Edit Patient Result
+	Support #273: Solan: Radiloogy
+
+1.4.3
+- Fixed bug not showing report on Patient Report page for DDU
+- Fixed bug not refresh the page when enter result on Worklist.
+
+1.4.2
+- Fixed bug not showing report on Patient Report page.
+- Changed the method to display patient's age on Queue.
+
+1.4.1
+- Added patient search for solan
+
+1.4.0
+- Moved CKEditor to Hospitalcore.
+- Changed code to use CKEditor in Hospitalcore.
+
+1.3.1
+- Rewritten saving radiology tests so Dashboard can read the results. 
+
+1.3
+- Integrated new patient search plugin.
+
+1.2.1
+- Improved feature maintainer
+
+1.2
+- Cloned to OpenMRS 1.8
+
+1.1.2
+- Fixed display improperly textarea content on patient report.
+- Added feature to display a warning message when unfilled fields found on form. 
+
+1.1.1
+- Changed to add html textarea element into default xray form.
+
+1.1
+- Added validation on reschedule date and reorder date forms.
+- Added notification on invalid fields when validating forms.
+- Fixed bug for button Dropdown in editor for validation.
+
+1.0.2
+- Resized the length of form name.
+- Changed to show inline x-ray test instead of popup.
+
+1.0.1
+- Fixed bug when checking for existing form
+
+1.0
+- Added pagination to feature Queue/Worklist/Edit result to improve the performance.
+- Fixed not showing preview form on Manage Form page.
+- Added feature Manage Template.
+- Updated patient report display.
+- Sorted concepts added to elements in form. 
+- Fixed bug validation when entering/editing test result.
+
+0.9
+- Resized the maximum size of form content for bigger form.
+- Changed to sort parameters in patient report using the same order in
+form
+- Reformat the patient report (note, report status)
+- Applied template to patient report
+
+0.8
+- Added feature to manage functional status of test and reflect changes in Billing.
+- Fixed bug the page always scroll to top when accepting/entering result in Queue.
+- Added feature to validate radiology form before submitting.
+- Added feature automatically create default form for xray test.
+- Changed to enter result for x-ray tests just like in lab module.
+- Changed the printout format of patient report.
+
+0.7
+- Fixed bug printing wrong area on Patient Report.
+- Fixed bug not completing x-ray test on Worklist.
+- Fixed bug not showing tests when searching in Edit Result. 
+- Fixed bug not updating test's results in Edit Result.
+- Changed to order tests by OrderDate.
+- Changed to show options (given, not given film) for x-ray tests on Worklist page.
+- Changed to show x-ray entered results on Edit Result page. 
+- Added feature Reorder into Worklist page.
+- Added feature to show/hide patient search result section in Patient Report page.
+- Fixed bug not showing form element popups in a standard size.
+- Fixed bug showing result in wrong format on Patient Report page.
+
+0.6
+- Changed table radiology_form for given/not given to patient report.
+- Changed table radiology_test for given/not given to patient report.
+- Fixed conflicting data in table radiology_form
+- Added feature to check the form type and form concept for duplications before saving a form.
+- Redesigned to add column 'type' and 'concept name' into List All Form page.
+- Changed to show two options for entering results for xray tests
+- Added default form for tests that have no associated form
+
+0.5
+- Fixed bug showing patient/test information when editing test or preview a form.
+- Fixed bug showing unaccept/reschedule links on Queue when a test is accepted.
+- Applied privileges to features. 
+  
+0.4
+- Added patient/test information into form.
+- Fixed bug searching test by investigation
+- Added tooltips for form elements and show them when elements are hovered on.
+- Added privileges for features  
+- Adjust feature Manage Department to be compatible with openmrs 1.8
+- Sort list of concepts suggested by autocomplete feature in Manage Form and Manage Department pages.
+
+0.3.2
+- Fixed bug not showing form editor in Linux system
+
+0.3.1
+- Fixed bug not showing form editor
+
+0.3
+1. Added code to enter result for tests have forms.
+2. Added feature Edit Result.
+3. Added feature Patient Report.
+
+0.2-SNAPSHOT
+1. Fixed bug showing wrong link to delete a department.
+2. Added feature Work List.
+3. Added feature Print Work List.
+4. Added feature Radiology Form.
+Notes:
+Please install HOSPITAL CORE 1.4.8.5 before installing this version.
+
+0.1-SNAPSHOT
+1. Added feature Manage Radiology Department (create/edit/delete a department)
+2. Added feature Queue: 
+    a. search for tests using Date/Patient name/Patient identifier/Investigation 
+    b. accept/unaccept/reschedule a test
+Notes:
+Please install BILLING 3.1.2 and HOSPITAL CORE 1.4.8.3 before installing this version.
