@@ -9,16 +9,12 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.math.NumberUtils;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.MedisunService;
-import org.openmrs.module.hospitalcore.model.DiaBarcodeGroup;
 import org.openmrs.module.hospitalcore.model.DiaCommissionCal;
 import org.openmrs.module.hospitalcore.model.DiaCommissionCalAll;
 import org.openmrs.module.hospitalcore.model.DiaCommissionCalPaid;
@@ -69,7 +65,7 @@ public class DocCommissionPayment {
         List<DiaCommissionCal> diaComCal = ms.getDiaComCal(docId, date, date1);
         model.addAttribute("diaComCal", diaComCal);
         model.addAttribute("diaComCalSize", diaComCal.size());
-        Integer docch=1;
+        Integer docch = 1;
         if (docch == 1) {
             List<Integer> listBillId = new ArrayList<Integer>();
 
@@ -80,8 +76,8 @@ public class DocCommissionPayment {
             }
 
             model.addAttribute("listBillId", listBillId);
-            System.out.println("**Group**" + listBillIdGroup);
-            System.out.println("**Singel**" + listBillId);
+         //   System.out.println("**Group**" + listBillIdGroup);
+            // System.out.println("**Singel**" + listBillId);
         }
 
         DocDetail docInfo = ms.getDocInfoById(docId);
@@ -107,6 +103,11 @@ public class DocCommissionPayment {
             @RequestParam(value = "note", required = false) String note,
             @RequestParam(value = "sDateValue", required = false) Date startDate,
             @RequestParam(value = "eDateValue", required = false) Date endDate,
+            @RequestParam(value = "totalBill", required = false) String totalBill,
+            @RequestParam(value = "dcomm", required = false) String dcomm,
+            @RequestParam(value = "docNet", required = false) String docNet,
+            @RequestParam(value = "paid", required = false) String paid,
+            @RequestParam(value = "due", required = false) String due,
             Model model) {
 
         String[] billID = request.getParameterValues("bill[]");
@@ -114,31 +115,48 @@ public class DocCommissionPayment {
         MedisunService ms = Context.getService(MedisunService.class);
         User user = Context.getAuthenticatedUser();
 
-        BigDecimal serviceAmount = NumberUtils.createBigDecimal(request.getParameter("totalBill"));
-        BigDecimal netAmount = NumberUtils.createBigDecimal(request.getParameter("dcomm"));
-        BigDecimal lessAount = NumberUtils.createBigDecimal(request.getParameter("lamount"));
-        BigDecimal docComm = NumberUtils.createBigDecimal(request.getParameter("docNet"));
-        BigDecimal paid = NumberUtils.createBigDecimal(request.getParameter("paid"));
-        BigDecimal due = NumberUtils.createBigDecimal(request.getParameter("due"));
+        BigDecimal serviceAmount = null;
+
+        BigDecimal docComm = null;
+
+        BigDecimal paidAmount = null;
+
+        BigDecimal dueAmount = null;
+
+        BigDecimal netAmount = null;
+
+        try {
+            serviceAmount = new BigDecimal(Double.parseDouble(totalBill));
+
+            docComm = new BigDecimal(Double.parseDouble(dcomm));
+
+            paidAmount = new BigDecimal(Double.parseDouble(paid));
+
+            dueAmount = new BigDecimal(Double.parseDouble(due));
+
+            netAmount = new BigDecimal(Double.parseDouble(docNet));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         DiaCommissionCalPaid dpaid = new DiaCommissionCalPaid();
         dpaid.setServiceAmount(serviceAmount);
         dpaid.setNetAmount(netAmount);
-        dpaid.setLessAmount(lessAount);
         dpaid.setDocCommission(docComm);
         dpaid.setCreatedDate(new Date());
         dpaid.setCreator(user);
         dpaid.setDocId(docId);
-        dpaid.setPaidAmount(paid);
-        dpaid.setDueAmount(due);
+        dpaid.setPaidAmount(paidAmount);
+        dpaid.setDueAmount(dueAmount);
         dpaid.setNote(note);
+
         ms.saveDiaComCalPaid(dpaid);
 
         DiaCommissionCalPaidAdj diaAdj = new DiaCommissionCalPaidAdj();
         diaAdj.setDiaComPaid(dpaid);
         diaAdj.setPayableAmount(docComm);
-        diaAdj.setPaidAmount(paid);
-        diaAdj.setDueAmount(due);
+        diaAdj.setPaidAmount(paidAmount);
+        diaAdj.setDueAmount(dueAmount);
         diaAdj.setUser(user);
         diaAdj.setCreatedDate(new Date());
         ms.saveDiaComPaidAdj(diaAdj);
@@ -163,8 +181,6 @@ public class DocCommissionPayment {
             DiaCommissionCalAll dAll = ms.getDiaAllByBillId(a);
             dAll.setStatus(Boolean.TRUE);
             ms.saveDiaComAll(dAll);
-
-            System.out.println("***bill id*****" + a);
 
         }
 

@@ -73,69 +73,16 @@
 
     });
 
-    function updatePrice(incon) {
-        var con = incon.toString();
-
-        var serqunid = con.concat("commission");
-        var serpriid = con.concat("serPrice");
-        var netAm = con.concat("netamount");
-        var l = con.concat("lessAm");
-        less = jQuery("#" + l).val();
-        serqun = jQuery("#" + serqunid).val();
-
-
-        var btn = con.concat("updateCommission");
-        var reacom = con.concat("realCommission");
-        real = jQuery("#" + reacom).val();
-        if (real != serqun) {
-            jQuery("#" + btn).css({"weight": "60px", "display": "inline"});
-        }
-
-        //jQuery(this).addClass("boxHover"); width:0px; height:0px; display:none;
-        // $('#opdWard option[value=4580]').css({"background-color": "#fff", "color": "red", "font-weight":"bold"});
-
-        var comP = con.concat("commissionP");
-        jQuery("#" + comP).val(serqun);
-        var netP = con.concat("netamountP");
-
-        unpri = jQuery("#" + serpriid).val();
-        var ll = ((serqun * unpri) / 100);
-        if (less < ll) {
-            jQuery("#" + netAm).val(ll);
-            jQuery("#" + netP).val(ll);
-        }
-        else {
-            jQuery("#" + netAm).val("0");
-            jQuery("#" + netP).val(ll);
-        }
-        ////////
-        var unPrice = con.concat("serPrice");
-        var com = con.concat("commission");
-        var lA = con.concat("lessAmCal");
-        up = jQuery("#" + unPrice).val();
-        c = jQuery("#" + com).val();
-        var lessA = ((up * c) / 100);
-        if (lessA > less) {
-            jQuery("#" + lA).val(less);
-        }
-        else {
-            jQuery("#" + lA).val(0);
-        }
-
-
-        // Doctor Net amount
-        var d = $('#dcomm').val();
-        var l = $('#lamount').val();
-        var less = (d - l);
-        var lessRound = less.toFixed(0)
-        $('#docNet').val(lessRound);
+    function updatePrice(indexNumber) {
+        var number = indexNumber.toString();
+        var commissionButton = number.concat("updateCommission");
+        jQuery("#" + commissionButton).css({"weight": "60px", "display": "inline"});
 
     }
 
     function saveCommission() {
         var paid = document.getElementById("paid").value;
         var bill = jQuery("#bId").val();
-        //alert("adfd"+bill);
 
         if (paid == null || paid == "")
         {
@@ -150,12 +97,12 @@
         var eDateValue = jQuery("#eDateValue").val();
         var totalBill = jQuery("#totalBill").val();
         var dcomm = jQuery("#dcomm").val();
-        var lamount = jQuery("#lamount").val();
         var docNet = jQuery("#docNet").val();
         var docId = jQuery("#docId").val();
         var note = jQuery("#note").val();
         var paid = jQuery("#paid").val();
         var due = jQuery("#due").val();
+		
 
         jQuery.ajax({
             type: "POST",
@@ -168,7 +115,6 @@
                 totalBill: totalBill,
                 dcomm: dcomm,
                 docNet: docNet,
-                lamount: lamount,
                 docId: docId,
                 note: note,
                 paid: paid,
@@ -300,38 +246,48 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:set var="rate" value="${0}"/> 
-                        <c:set var="refferel" value="${0}"/> 
-                        <c:set var="servicePrice1" value="${0}"/> 
+                        <c:set var="totalPayable" value="${0}"/> 
+                        <c:set var="totalServicePrice" value="${0}"/> 
 
                         <c:forEach items="${diaComCal}" var="patient"  varStatus="index">
-                            <c:set var="com" value="${patient.commission}"/>
-                            <c:set var="ser" value="${patient.servicePrice}"/>
-                            <c:set var="ac" value="${ (ser * com)/100 }"/>
+                            <c:set var="doctorCommission" value="${patient.commission}"/>
+                            <c:set var="servicePrice" value="${patient.servicePrice}"/>
+                            <c:set var="actualRefferel" value="${ (servicePrice * doctorCommission)/100 }"/>
 
-                            <c:set var="comm"><fmt:parseNumber  type="number"    value="${patient.lessAmount}" /> </c:set>
+                            <c:set var="patientLessAmount"><fmt:parseNumber  type="number"    value="${patient.lessAmount}" /> </c:set>
                             <c:set var="serPri"><fmt:parseNumber  type="number"    value="${patient.servicePrice}" /> </c:set>
-                            <c:set var="twenty"><fmt:parseNumber  type="number"    value="${20.00}" /> </c:set>
 
-                            <c:set var="comPer" value="${ (comm /serPri)*100 }"/>
-                            <c:set var="actualPer" value="${comPer - twenty}" />
-                            <c:set var="onePer" value="${ (serPri*1)/100}" />
-                            <c:set var="min"  value="${ (comPer - twenty)*onePer }" />
+                            <c:set var="commissionInPercentage" value="${ (patientLessAmount /serPri)*100 }"/>
 
-                            <c:if test="${ comPer > 30 }">
-                                <c:set var="payable" value="${0.00}"/>
-                                <c:set var="less" value="${0.0}"/>
-                            </c:if>
 
-                            <c:if test="${ comPer < 20 }">
-                                <c:set var="payable" value="${ (ser * com)/100 }"/>
-                                <c:set var="less" value="${0.00}"/>
-                            </c:if>
 
-                            <c:if test="${ comPer >= 20 && comPer <= 30}">
-                                <c:set var="payable" value="${ ac - min }"/>
-                                <c:set var="less" value="${00}"/>
-                            </c:if>
+
+                      
+							
+							
+							  <c:choose>
+                                <c:when test="${ commissionInPercentage == doctorCommission}">
+                                    <c:set var="payable" value="${0 }"/>
+
+                                </c:when>
+                                <c:when test="${ commissionInPercentage > doctorCommission}">
+                                    <c:set var="payable" value="${0 }"/>
+
+                                </c:when>
+                                <c:when test="${ commissionInPercentage > 20}">
+                                    <c:set var="payable" value="${ actualRefferel-patientLessAmount}"/>
+
+                                </c:when>						
+								
+                                <c:when test="${ commissionInPercentage <= 20 }">
+                                    <c:set var="payable" value="${ (actualRefferel-(patientLessAmount/2))}"/>
+
+                                </c:when>
+                                <c:otherwise>
+
+                                </c:otherwise>
+                            </c:choose>
+
 
 
                             <tr > 
@@ -352,16 +308,15 @@
                                            value="${patient.lessAmount}" /> 
                                 </td>
                                 <td style="border-right:1px solid #D8D8D8; text-align:right; padding-right:10px; font-size:16px;"> 
-                                    ${ac}  									  
+                                    ${actualRefferel}  									  
                                 </td>
                                 <td style="border-right:1px solid #D8D8D8; text-align:right; font-size:16px;">
-                                    <fmt:formatNumber type="number" maxFractionDigits="2" value="${comPer}" /> 									    
+                                    <fmt:formatNumber type="number" maxFractionDigits="2" value="${commissionInPercentage}" /> 									    
                                 </td>
 
                                 <td style="border-right:1px solid #D8D8D8; text-align:center;">
                                     <input type="value" id="${index.count}commission" name="${index.count}commission" class="commission"  
                                            value="${patient.commission}" onkeyup="updatePrice(${index.count});"/> 
-                                    <input type="hidden" id="${index.count}realCommission" value="${patient.commission}" />
 
                                     <input type="button" id="${index.count}updateCommission" class="bs" style="display:none;" value="Update" onclick="updateCommission(${index.count});" />
 
@@ -372,11 +327,8 @@
                                     <fmt:formatNumber type="number" maxFractionDigits="2" value="${payable}" /> </td>
 
                             </tr>
-                            <c:set var="rate" value="${rate + payable}"/>
-                            <c:set var="servicePrice1" value="${servicePrice1 + ser }"/>
-                            <c:set var="refferel" value="${refferel + less}"/>
-
-
+                            <c:set var="totalPayable" value="${totalPayable + payable}"/>
+                            <c:set var="totalServicePrice" value="${totalServicePrice + servicePrice }"/>
                         </c:forEach>
 
                     </tbody>
@@ -390,16 +342,16 @@
 </div>
 <br>
 <c:if test="${not empty diaComCal}">
-    <c:set var="rateTotal"> <fmt:parseNumber  type="number" value="${rate}" /> </c:set>
+    <c:set var="totalPayable" value=" ${totalPayable+((totalPayable%1>0.5)?(1-(totalPayable%1))%1:-(totalPayable%1))}"/>
 
-        <div  style="margin-left:100px;">
+    <div  style="margin-left:100px;">
 
-            <span style="font-size:16px; font-weight:bold; color:#000;">Total Service Amount    : </span>  
-            <input type="value" id="totalBill" name="totalBill"  readOnly="true" value="${servicePrice1}"
+        <span style="font-size:16px; font-weight:bold; color:#000;">Total Service Amount    : </span>  
+        <input type="value" id="totalBill" name="totalBill"  readOnly="true" value="${totalServicePrice}"
                style="width:150px; text-align:right;  color:blue;  font-size:18px; font-weight:bold; background-color:#fff; "/>   
 
         <span style="font-size:16px; padding-left:50px; font-weight:bold; color:#000;">Total Payable Amount : &nbsp; </span>
-        <input type="value" id="dcomm" name="dcomm"  readOnly="true" value="${rateTotal}"
+        <input type="value" id="dcomm" name="dcomm"  readOnly="true" value="${totalPayable}"
                style="width:150px; text-align:right;  color:blue;  font-size:18px; font-weight:bold; background-color:#fff; "/>   &emsp;&emsp;
 
         <br><br>
@@ -474,40 +426,35 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <c:set var="rate" value="${0}"/> 
-                    <c:set var="refferel" value="${0}"/> 
-                    <c:set var="servicePrice1" value="${0}"/>
-                    <c:set var="refferelAmount" value="${0}"/>
-                    <c:set var="discountAmount" value="${0}"/>
+                    <c:set var="totalPayable" value="${0}"/>
+                    <c:set var="totalServicePrice" value="${0}"/>
+                    <c:set var="totalRefferelAmount" value="${0}"/>
+                    <c:set var="totalDiscountAmount" value="${0}"/>
 
                     <c:forEach items="${diaComCal}" var="patient"  varStatus="index">
-                        <c:set var="com" value="${patient.commission}"/>
-                        <c:set var="ser" value="${patient.servicePrice}"/>
-                        <c:set var="ac" value="${ (ser * com)/100 }"/>
+                        <c:set var="doctorCommission" value="${patient.commission}"/>
+                        <c:set var="servicePrice" value="${patient.servicePrice}"/>
+                        <c:set var="actualRefferel" value="${ (servicePrice * doctorCommission)/100 }"/>
 
-                        <c:set var="comm"><fmt:parseNumber  type="number"    value="${patient.lessAmount}" /> </c:set>
+                        <c:set var="patientLessAmount"><fmt:parseNumber  type="number"    value="${patient.lessAmount}" /> </c:set>
                         <c:set var="serPri"><fmt:parseNumber  type="number"    value="${patient.servicePrice}" /> </c:set>
                         <c:set var="twenty"><fmt:parseNumber  type="number"    value="${20.00}" /> </c:set>
 
-                        <c:set var="comPer" value="${ (comm /serPri)*100 }"/>
-                        <c:set var="actualPer" value="${comPer - twenty}" />
-                        <c:set var="onePer" value="${ (serPri*1)/100}" />
-                        <c:set var="min"  value="${ (comPer - twenty)*onePer }" />
+                        <c:set var="commissionInPercentage" value="${ (patientLessAmount /serPri)*100 }"/>
 
-                        <c:if test="${ comPer > 30 }">
+
+                        <c:if test="${commissionInPercentage >= doctorCommission }">
                             <c:set var="payable" value="${0.00}"/>
-                            <c:set var="less" value="${0.0}"/>
                         </c:if>
 
-                        <c:if test="${ comPer < 20 }">
-                            <c:set var="payable" value="${ (ser * com)/100 }"/>
-                            <c:set var="less" value="${0.00}"/>
+                        <c:if test="${commissionInPercentage > 20 }">
+                            <c:set var="payable" value="${actualRefferel-patientLessAmount}"/>
                         </c:if>
 
-                        <c:if test="${ comPer >= 20 && comPer <= 30}">
-                            <c:set var="payable" value="${ ac - min }"/>
-                            <c:set var="less" value="${00}"/>
+                        <c:if test="${commissionInPercentage <= 20 }">
+                            <c:set var="payable" value="${actualRefferel-(patientLessAmount/2)}"/>
                         </c:if>
+
                         <tr> 
                             <td   style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;" >
                                 <openmrs:formatDate date="${patient.createdDate}" /> </td>  
@@ -515,30 +462,30 @@
                             <td   style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;"  >${patient.patient.givenName} ${patient.patient.familyName}  </td>
                             <td  style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;" > ${patient.serviceName}  </td>
                             <td  style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right;" >  ${patient.servicePrice} </td>
-                            <td  style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right;" >  ${ac} </td>
+                            <td  style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right;" >  ${actualRefferel} </td>
 
                             <td class="btd right" style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right;" > ${patient.lessAmount} </td>
                             <td class="btd right" style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right;" > 
-                                <fmt:formatNumber type="number" maxFractionDigits="2" value="${comPer}" /> </td>
+                                <fmt:formatNumber type="number" maxFractionDigits="2" value="${commissionInPercentage}" /> </td>
                             <td class="btd right" style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right;" >
                                 <fmt:formatNumber type="number" maxFractionDigits="2" value="${payable}" />  </td>
                         </tr>
-                        <c:set var="rate" value="${rate + payable}"/>
-                        <c:set var="servicePrice1" value="${servicePrice1 + ser }"/>
-                        <c:set var="refferel" value="${refferel + less}"/>
-                        <c:set var="refferelAmount" value="${ refferelAmount + ac}"/> 
-                        <c:set var="discountAmount" value="${discountAmount + comm}"/>
+                        <c:set var="totalPayable" value="${totalPayable + payable}"/>
+                        <c:set var="totalServicePrice" value="${totalServicePrice + servicePrice }"/>
+
+                        <c:set var="totalRefferelAmount" value="${ totalRefferelAmount + actualRefferel}"/> 
+                        <c:set var="totalDiscountAmount" value="${totalDiscountAmount + patientLessAmount}"/>
                     </c:forEach>
-                    <c:set var="rateTotal"> <fmt:parseNumber  type="number" value="${rate}" /> </c:set>
-                        <tr > <td colspan="4" style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; " >
-                                <span style="display: block;   text-align: right; padding-right:15px; font-size:16px; font-weight:bold; color:#000;"> Total  </span> </td>
-                            <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right; font-size:14px;"  >  ${servicePrice1} </td>
-                        <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right; font-size:14px;"    >  ${refferelAmount}  </td>
+                    <c:set var="totalPayable" value=" ${totalPayable+((totalPayable%1>0.5)?(1-(totalPayable%1))%1:-(totalPayable%1))}"/>
+                    <tr > <td colspan="4" style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; " >
+                            <span style="display: block;   text-align: right; padding-right:15px; font-size:16px; font-weight:bold; color:#000;"> Total  </span> </td>
+                        <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right; font-size:14px;"  >  ${totalServicePrice} </td>
+                        <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right; font-size:14px;"    >  ${totalRefferelAmount}  </td>
                         <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right; display:none;"   class="a right"> <input type="value" id="serTotal" value=" " class="normal" /> </td>
-                        <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;text-align:right; font-size:14px;"    > ${discountAmount} </td>
+                        <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;text-align:right; font-size:14px;"    > ${totalDiscountAmount} </td>
                         <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;text-align:right; font-size:14px;"    > 0.00 </td>
 
-                        <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;text-align:right; font-size:14px;"    >  ${rateTotal}  </td>
+                        <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;text-align:right; font-size:14px;"    >  ${totalPayable}  </td>
 
 
                     </tr>
@@ -547,7 +494,7 @@
                         <td colspan="4" style="padding-right: 10px; border-bottom:1pt solid #000; height:30px;
                             border-right: 1px solid #000; text-align: right; font-size:16px; font-weight:bold; color:#000; "> Referral Amount (tk) </td>
                         <td  colspan="3" style=" border-bottom:1pt solid #000; height:30px; padding-left: 10px;
-                             border-right: 1px solid #000; font-size:16px; font-weight:bold;  color:#000; "> ${rateTotal} </td>
+                             border-right: 1px solid #000; font-size:16px; font-weight:bold;  color:#000; "> ${totalPayable} </td>
                     </tr>  
                 </tbody>
             </table>
@@ -615,3 +562,4 @@
     }
 
 </script>
+

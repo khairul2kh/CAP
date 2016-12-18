@@ -85,8 +85,8 @@ public class RmpCommissionPayment {
             }
 
             model.addAttribute("listBillId", listBillId);
-            System.out.println("**Group**" + listBillIdGroup);
-            System.out.println("**Singel**" + listBillId);
+          //  System.out.println("**Group**" + listBillIdGroup);
+            // System.out.println("**Singel**" + listBillId);
         }
 
         if (Context.getAuthenticatedUser() != null && Context.getAuthenticatedUser().getId() != null) {
@@ -106,37 +106,63 @@ public class RmpCommissionPayment {
             @RequestParam(value = "note", required = false) String note,
             @RequestParam(value = "sDateValue", required = false) Date startDate,
             @RequestParam(value = "eDateValue", required = false) Date endDate,
+            @RequestParam(value = "totalBill", required = false) String totalBill,
+            @RequestParam(value = "dcomm", required = false) String dcomm,
+            @RequestParam(value = "docNet", required = false) String docNet,
+            @RequestParam(value = "paid", required = false) String paid,
+            @RequestParam(value = "due", required = false) String due,
             Model model) {
 
         MedisunService ms = Context.getService(MedisunService.class);
         User user = Context.getAuthenticatedUser();
         String[] billID = request.getParameterValues("bill[]");
 
-        BigDecimal serviceAmount = NumberUtils.createBigDecimal(request.getParameter("totalBill"));
-        BigDecimal netAmount = NumberUtils.createBigDecimal(request.getParameter("dcomm"));
-        BigDecimal lessAount = NumberUtils.createBigDecimal(request.getParameter("lamount"));
-        BigDecimal docComm = NumberUtils.createBigDecimal(request.getParameter("docNet"));
-        BigDecimal paid = NumberUtils.createBigDecimal(request.getParameter("paid"));
-        BigDecimal due = NumberUtils.createBigDecimal(request.getParameter("due"));
+//        BigDecimal serviceAmount = NumberUtils.createBigDecimal(request.getParameter("totalBill"));
+//        BigDecimal netAmount = NumberUtils.createBigDecimal(request.getParameter("dcomm"));
+//        BigDecimal docComm = NumberUtils.createBigDecimal(request.getParameter("docNet"));
+//        BigDecimal paid = NumberUtils.createBigDecimal(request.getParameter("paid"));
+//        BigDecimal due = NumberUtils.createBigDecimal(request.getParameter("due"));
+        BigDecimal serviceAmount = null;
+
+        BigDecimal docComm = null;
+
+        BigDecimal paidAmount = null;
+
+        BigDecimal dueAmount = null;
+
+        BigDecimal netAmount = null;
+
+        try {
+            serviceAmount = new BigDecimal(Double.parseDouble(totalBill));
+
+            docComm = new BigDecimal(Double.parseDouble(dcomm));
+
+            paidAmount = new BigDecimal(Double.parseDouble(paid));
+
+            dueAmount = new BigDecimal(Double.parseDouble(due));
+
+            netAmount = new BigDecimal(Double.parseDouble(docNet));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         DiaRmpCommCalculationPaid drmp = new DiaRmpCommCalculationPaid();
         drmp.setServiceAmount(serviceAmount);
         drmp.setNetAmount(netAmount);
-        drmp.setLessAmount(lessAount);
         drmp.setRmpCommission(docComm);
         drmp.setCreatedDate(new Date());
         drmp.setCreator(user);
         drmp.setRmpId(comId);
-        drmp.setPaidAmount(paid);
-        drmp.setDueAmount(due);
+        drmp.setPaidAmount(paidAmount);
+        drmp.setDueAmount(dueAmount);
         drmp.setNote(note);
         ms.saveRmpComPaid(drmp);
 
         DiaRmpCommCalculationPaidAdj diaRmpAdj = new DiaRmpCommCalculationPaidAdj();
         diaRmpAdj.setDiaRmpComPaid(drmp);
         diaRmpAdj.setPayableAmount(docComm);
-        diaRmpAdj.setPaidAmount(paid);
-        diaRmpAdj.setDueAmount(due);
+        diaRmpAdj.setPaidAmount(paidAmount);
+        diaRmpAdj.setDueAmount(dueAmount);
         diaRmpAdj.setUser(user);
         diaRmpAdj.setCreatedDate(new Date());
         ms.saveDiaRmpAdj(diaRmpAdj);

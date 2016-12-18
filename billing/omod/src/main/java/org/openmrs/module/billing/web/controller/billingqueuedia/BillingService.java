@@ -123,8 +123,8 @@ public class BillingService {
         String fullFree = request.getParameter("free");
         String freeReason = request.getParameter("freeReason");
 
-        System.out.println("***********ppppp" + fullPaid);
-        System.out.println("***********ffffff" + fullFree);
+      //  System.out.println("***********ppppp" + fullPaid);
+       // System.out.println("***********ffffff" + fullFree);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date deDate = null;
@@ -170,7 +170,7 @@ public class BillingService {
             due = "DUE";
             status = false;
         }
-        System.out.println("***********status***" + due);
+    //    System.out.println("***********status***" + due);
 
         DiaPatientServiceBill dpsb = new DiaPatientServiceBill();
         dpsb.setPatient(patient);
@@ -375,7 +375,6 @@ public class BillingService {
 
         //  File outputFileBillId = new File("F:\\tomcat6(OpenMRS)\\webapps\\CURE_AND_PREVENTS_V2_Final\\barcode/" + dpsb.getBillId() + ".png"); // Local
         //  File file = new File(request.getSession().getServletContext().getRealPath("/WEB-INF/view/module/radiology/file/" + testName + ".txt"));
-       //this is for git test
         File outputFileBillId = new File(request.getSession().getServletContext().getRealPath("/barcode/" + dpsb.getBillId() + ".png"));
 
         OutputStream outB = new FileOutputStream(outputFileBillId);
@@ -416,3 +415,4 @@ public class BillingService {
         return bar;
     }
 }
+

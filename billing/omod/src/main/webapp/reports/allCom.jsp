@@ -119,7 +119,7 @@
             <!-- for data save all bill id-->
             <select id="id" multiple style="display:none;" />
         <c:forEach items="${withoutDueList}" var="a" varStatus="index">
-            <option value="${a}" >${a} </option>
+            <option value="${a}" >${a}</option>
         </c:forEach>
         </select>
 
@@ -165,31 +165,77 @@
                                     <c:set var="totper" value="${(ll/ssss)*100}" />
                                     <c:set var="oneper" value="${(ssss*1)/100}" />
 
+                                    <c:set var="doctorCommission" value="${(docCom/ssss)*100} " /> 
+
+
+
                                     <c:set var="totalreferal" value="0.0"/> 
 
-                                    <c:if test="${d.diaPatientServiceBill.billingStatus eq 'PAID'}">    
+                                    <c:if test="${d.diaPatientServiceBill.billingStatus eq 'PAID'}">   
 
+                                        <!-- Doctor 
+                                        
+                                        
+                                        
+                                        
                                         <c:if test="${ totper <= '20.00'}"> <c:set var="totalreferal" value="${d.comAmount} "/> </c:if>
                                         <c:if test="${ totper > '20.01' && totper < '30.01' }">
                                             <c:set var="totalreferal" value="${ docCom -((totper - 20)* oneper)} " /> 
                                         </c:if>
                                         <c:if test="${ totper > '30.00'}"> <c:set var="totalreferal" value="${0.00} "/> </c:if> 
+ 
+ 
+ 
+ 
+                                            -->									
+
+
+
+
+                                        <c:choose>
+                                            <c:when test="${ totper == doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > 20}">
+                                                <c:set var="totalreferal" value="${ docCom-ll}"/>
+
+                                            </c:when>						
+
+                                            <c:when test="${ totper <= 20 }">
+                                                <c:set var="totalreferal" value="${ (docCom-(ll/2))}"/>
+
+                                            </c:when>
+                                            <c:otherwise>
+
+                                            </c:otherwise>
+                                        </c:choose>
+
+
                                     </c:if> 
+
+
+
 
                                     <tr> 
                                         <td  class="a left"><openmrs:formatDate date="${d.createdDate}" /> </td> <!-- date -->
                                         <td  class="a left"> ${d.diaPatientServiceBill.billId}   </td>  <!-- bill id -->
                                         <td  class="a left"> ${d.serviceName}   </td> <!-- investigation name -->
                                         <td  align="right" class="a right"> ${d.servicePrice}   </td>  <!-- rate -->
-                                        <td  align="right" class="a right"> ${d.comAmount}     </td>  <!-- referrel amount -->
+                                        <td  align="right" class="a right">   ${d.comAmount}    </td>  <!-- referrel amount -->
                                         <td  align="right" class="a right"  >  ${d.lessAmount}   </td> <!-- discount -->
                                         <td  align="center" class="a right"  >  
-                                            <fmt:formatNumber type="number" maxFractionDigits="3" value="${(ll/ssss)*100}" />   
+                                            <fmt:formatNumber type="number" maxFractionDigits="3" value="${(ll/ssss)*100}" />
+
                                         </td> <!-- Percentage -->
                                         <td  align="right" class="a right"> <c:if test="${d.diaPatientServiceBill.billingStatus eq 'DUE'}">  DUE  </c:if>
                                             <c:if test="${d.diaPatientServiceBill.billingStatus eq 'FREE'}">  FREE  </c:if>
                                             <c:if test="${d.diaPatientServiceBill.billingStatus eq 'PAID'}">
-                                                <fmt:formatNumber type="number" maxFractionDigits="3" value="${totalreferal}" /> 
+                                                <fmt:formatNumber type="number" maxFractionDigits="3" value="${totalreferal}" /> 												
                                             </c:if> 
                                         </td>     <!-- total referrel -->
                                     </tr>
@@ -265,10 +311,15 @@
                                     <c:set var="totper" value="${(ll/ssss)*100}" />
                                     <c:set var="oneper" value="${(ssss*1)/100}" />
 
+                                    <c:set var="doctorCommission" value="${(docCom/ssss)*100} " /> 
+
                                     <c:set var="totalreferal" value="0.0"/> 
 
                                     <c:if test="${d.diaPatientServiceBill.billingStatus eq 'PAID'}">    
 
+
+                                        <!-- CH 
+                                        
                                         <c:if test="${ totper <= '20.00'}"> <c:set var="totalreferal" value="${d.comAmount} "/> </c:if>
 
                                         <c:if test="${ totper > '20.01' && totper < '30.01' }">
@@ -276,6 +327,35 @@
                                         </c:if>
 
                                         <c:if test="${ totper > '30.00'}"> <c:set var="totalreferal" value="${0.00} "/> </c:if> 
+                                                                          
+                                            -->
+
+
+
+
+
+                                        <c:choose>
+                                            <c:when test="${ totper == doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > 20}">
+                                                <c:set var="totalreferal" value="${ docCom-ll}"/>
+
+                                            </c:when>						
+
+                                            <c:when test="${ totper <= 20 }">
+                                                <c:set var="totalreferal" value="${ (docCom-(ll/2))}"/>
+
+                                            </c:when>
+                                            <c:otherwise>
+
+                                            </c:otherwise>
+                                        </c:choose>
 
                                     </c:if> 
 
@@ -285,7 +365,7 @@
                                         <td  class="a left"> ${d.diaPatientServiceBill.billId}   </td>  <!-- bill id -->
                                         <td  class="a left"> ${d.serviceName}   </td> <!-- investigation name -->
                                         <td  align="right" class="a right"> ${d.servicePrice}   </td>  <!-- rate -->
-                                        <td  align="right" class="a right"> ${d.comAmount}     </td>  <!-- referrel amount -->
+                                        <td  align="right" class="a right"> ${d.comAmount} </td>  <!-- referrel amount -->
                                         <td  align="right" class="a right"> ${d.lessAmount} </td> <!-- discount -->
                                         <td align="center" class="a right">	
                                             <fmt:formatNumber type="number" maxFractionDigits="3" value="${(ll/ssss)*100}" /> 
@@ -373,14 +453,46 @@
                                     <c:set var="totper" value="${(ll/ssss)*100}" />
                                     <c:set var="oneper" value="${(ssss*1)/100}" />
 
+
+                                    <c:set var="doctorCommission" value="${(docCom/ssss)*100} " /> 
+
                                     <c:set var="totalreferal" value="0.0"/> 
 
-                                    <c:if test="${d.diaPatientServiceBill.billingStatus eq 'PAID'}">    
+                                    <c:if test="${d.diaPatientServiceBill.billingStatus eq 'PAID'}">  
+                                        <!-- date 
                                         <c:if test="${ totper <= '20.00'}"> <c:set var="totalreferal" value="${d.comAmount} "/> </c:if>
                                         <c:if test="${ totper > '20.01' && totper < '30.01' }">
                                             <c:set var="totalreferal" value="${ docCom -((totper - 20)* oneper)} " /> 
                                         </c:if>
                                         <c:if test="${ totper > '30.00'}"> <c:set var="totalreferal" value="${0.00} "/> </c:if> 
+
+                                            -->									
+
+
+
+                                        <c:choose>
+                                            <c:when test="${ totper == doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > 20}">
+                                                <c:set var="totalreferal" value="${ docCom-ll}"/>
+
+                                            </c:when>						
+
+                                            <c:when test="${ totper <= 20 }">
+                                                <c:set var="totalreferal" value="${ (docCom-(ll/2))}"/>
+
+                                            </c:when>
+                                            <c:otherwise>
+
+                                            </c:otherwise>
+                                        </c:choose>
+
                                     </c:if> 
 
                                     <tr> 
@@ -470,12 +582,51 @@
                                     <c:set var="oneper" value="${(ssss*1)/100}" />
                                     <c:set var="totalreferal" value="0.0"/> 
 
+                                    <c:set var="doctorCommission" value="${(docCom/ssss)*100} " /> 
+
                                     <c:if test="${d.diaPatientServiceBill.billingStatus eq 'PAID'}">    
+
+
+
+                                        <!-- date
+                                        
                                         <c:if test="${ totper <= '20.00'}"> <c:set var="totalreferal" value="${d.comAmount} "/> </c:if>
                                         <c:if test="${ totper > '20.01' && totper < '30.01' }">
                                             <c:set var="totalreferal" value="${ docCom -((totper - 20)* oneper)} " /> 
                                         </c:if>
                                         <c:if test="${ totper > '30.00'}"> <c:set var="totalreferal" value="${0.00} "/> </c:if> 
+
+                                        <c:if test="${ totper <= '20.00'}"> <c:set var="totalreferal" value="${d.comAmount} "/> </c:if>
+                                        <c:if test="${ totper > '20.01' && totper < '30.01' }">
+                                            <c:set var="totalreferal" value="${ docCom -((totper - 20)* oneper)} " /> 
+                                        </c:if>
+                                        <c:if test="${ totper > '30.00'}"> <c:set var="totalreferal" value="${0.00} "/> </c:if> 
+                                                                                
+                                                                                
+                                            -->
+
+                                        <c:choose>
+                                            <c:when test="${ totper == doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > doctorCommission}">
+                                                <c:set var="totalreferal" value="${0 }"/>
+
+                                            </c:when>
+                                            <c:when test="${ totper > 20}">
+                                                <c:set var="totalreferal" value="${ docCom-ll}"/>
+
+                                            </c:when>						
+
+                                            <c:when test="${ totper <= 20 }">
+                                                <c:set var="totalreferal" value="${ (docCom-(ll/2))}"/>
+
+                                            </c:when>
+                                            <c:otherwise>
+
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:if> 
                                     <tr> 
                                         <td  class="a left"><openmrs:formatDate date="${d.createdDate}" /> </td> <!-- date -->
@@ -498,7 +649,7 @@
                                     <c:set var="refAmount" value="${refAmount + d.comAmount}"/>
                                     <c:set var="discount" value="${discount + d.lessAmount}"/>
                                     <c:set var="toRef" value="${toRef + aaa}"/>
-
+                                    <c:set var="netTotalReferal" value="${netTotalReferal + totalreferal}"/>
                                 </c:if>
                             </c:forEach>
                             <tr style="font-size:14px; font-weight:bold;"> <td colspan="3"  align="right" class="a right"> <span style="display: block;   text-align: right; padding-right:15px; font-weight:bold; color:#000;"> Total  </span> </td>
