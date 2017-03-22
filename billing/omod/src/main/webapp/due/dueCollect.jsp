@@ -245,8 +245,8 @@ src="${pageContext.request.contextPath}/moduleResources/billing/scripts/jquery/j
                 </c:if>
             </td>
             <td><b>Bill Id:</b> <span style="font-weight:bold; font-size:20px; color:blue;"> ${dpsb.billId} </span> </td>
-
         </tr>  
+        <c:if test="${not empty dpsb.comment}"> <tr><td colspan="3"> Remarks : ${dpsb.comment} </td> </tr> </c:if>
     </table>
     <br>
     <table id="myTable" class="kha"   width="70%">

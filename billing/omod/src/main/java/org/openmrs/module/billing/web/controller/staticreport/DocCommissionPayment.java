@@ -164,24 +164,32 @@ public class DocCommissionPayment {
         List<DiaCommissionCal> diaComCal = ms.getDiaComCal(comID, startDate, endDate);
 
         // List<DiaCommissionCal> diaList = ms.getDiaComCalByBillId(comID); //  Get By Ref Id then save it
-        for (int i = 0; i < diaComCal.size(); i++) {
-            DiaCommissionCal d = (DiaCommissionCal) diaComCal.get(i);
-            d.setStatus(Boolean.TRUE);
-            d.setDiaComPaid(dpaid);
-            ms.saveDiaComCal(d);
-        }
+   
 
         for (int x = 0; x < billID.length; x++) {
             Integer a = Integer.parseInt(billID[x]);
 
             DiaPatientServiceBill diaSer = ms.getDiaPatientServiceBillId(a);
-            diaSer.setComStatus(Boolean.TRUE);
+            
+            if(diaSer.getBillingStatus().trim().equals("PAID")){
+                diaSer.setComStatus(Boolean.TRUE);
             ms.saveDiaPatientServiceBill(diaSer);
 
             DiaCommissionCalAll dAll = ms.getDiaAllByBillId(a);
             dAll.setStatus(Boolean.TRUE);
             ms.saveDiaComAll(dAll);
-
+            }
+        }
+        
+        
+             for (int i = 0; i < diaComCal.size(); i++) {
+            DiaCommissionCal d = (DiaCommissionCal) diaComCal.get(i);
+            
+            if(d.getDiaPatientServiceBill().getBillingStatus().trim().equals("PAID")){
+            d.setStatus(Boolean.TRUE);
+            d.setDiaComPaid(dpaid);
+            ms.saveDiaComCal(d);
+            }
         }
 
         return "module/billing/reports/comView";

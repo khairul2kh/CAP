@@ -23,7 +23,9 @@
 
         <input value="CH Commission View/Update" type="button" class="btn1"  onclick="window.location.href = 'rmpComPaymentView.htm'" />  <!--Rmp there is CH --> <br><br><br>
 
-        <input value="Commission Payment" type="button" class="btn1"  onclick="window.location.href = 'compay.htm'" />
+        <input value="Commission Payment" type="button" class="btn1"  onclick="window.location.href = 'compay.htm'" /> &nbsp;&nbsp; &emsp;
+        
+        <input value="Commission Payment View" type="button" class="btn1"  onclick="window.location.href = 'paidCommissionPaymentView.htm'" />
 
 
     </div>

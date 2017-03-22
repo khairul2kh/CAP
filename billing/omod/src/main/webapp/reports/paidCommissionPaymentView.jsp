@@ -25,10 +25,6 @@
     });
 
     function saveCommission() {
-        
-        jQuery("#commissionCalForm").mask(
-                "<img src='" + openmrsContextPath + "/images/ajax-loader.gif" + "'/>&nbsp;");
-        
         var bill = $("#id").val();
 
         var json = bill;
@@ -78,42 +74,6 @@
         }
     }
 
-
-    // submit form
-    function callSubmit() {
-        if (SESSION.checkSession()) {
-            var dName = document.getElementById("docch").value;
-            var sDate = document.getElementById("sDate").value;
-            var eDate = document.getElementById("eDate").value;
-
-            if (dName == null || dName == "" || dName == "0")
-            {
-                alert("Please Select Doctor / CH List!!");
-                $("#docch").focus();
-                $("#docch").css({"background-color": "yellow", "color": "red"});
-                // jQuery("#paidcommission").hide();
-                return false;
-            }
-            else if (sDate == null || sDate == "")
-            {
-                alert("Please Enter Start Date!!");
-                $("#sDate").focus();
-                // jQuery("#paidcommission").hide();
-                return false;
-            }
-            else if (eDate == null || eDate == "")
-            {
-                alert("Please Enter End Date !!");
-                $("#eDate").focus();
-                // jQuery("#paidcommission").hide();
-                return false;
-            }
-        }
-        $("#commissionCalForm").submit();
-        jQuery("#commissionCalForm").mask(
-                "<img src='" + openmrsContextPath + "/images/ajax-loader.gif" + "'/>&nbsp;");
-    }
-
     function printDiv3() {
         var divToPrint = document.getElementById('mainContent');
         var htmlToPrint = '' +
@@ -136,9 +96,9 @@
     }
 </script>
 
-<input type="hidden" id="pageId" value="allCommissionPayment" />
-<form class="form-rep-view" method="get" action="compayview.htm" id="commissionCalForm" >
-    <div class="boxHeader1">   <strong>Commission Payment/Print</strong></div>
+
+<form class="form-rep-view" method="post" action="paidCommissionPaymentView.htm" id="paidCommissionPaymentViewForm" onsubmit="return validate()" >
+    <div class="boxHeader1">   <strong>Paid Commission Payment View/Print</strong></div>
     <div class="box1">
         <span style="font-size:14px; font-weight: bold;"> Select Doctor / CH List </span> 
         <select id="docch" name="docch" class="styled-select blue semi-square" >
@@ -152,28 +112,24 @@
         <input type="text" placeholder="Please Enter Start Date " id="sDate" name="sDate" style="width:250px;"/> &nbsp;&nbsp;&nbsp;
         <span style="font-size:14px; font-weight: bold;"> End Date : </span>  
         <input type="text" placeholder="Please Enter End Date " id="eDate" name="eDate" style="width:250px;"/> &nbsp;&nbsp;&nbsp;
-        <input type="button" value="Get View" id="getview" onclick="callSubmit();" class="bu-normal" /> &emsp;&emsp; 
+        <input type="submit" value="Get View" id="getview"    class="bu-normal"  /> &emsp;&emsp; 
 
-        <c:if test="${not empty allDoctorAndRmpCommission}">
+        <c:if test="${not empty allPaidDoctorAndRmpCommission}">
             <input type="button" class="bs" id="printbill" value="Print" onClick="printDiv3();"  /> 
-            <input type="button" id="paidcommission" class="bs" value="Paid" onclick="saveCommission();" /> 
+ 
 
         </c:if>
         <div id="billingqueue" style="padding:4px;"></div>
     </div>
 
     <div class="box1" id="mainContent" >    
-        <!-- for data save all bill id-->
-        <select id="id" multiple style="display:none;" />
-        <c:forEach items="${billIdListWithOutDue}" var="a" varStatus="index">
-            <option value="${a}" >${a}</option>
-        </c:forEach>
-        </select>
+   
+
 
         <c:if test="${docch eq '1'}">
             <center><b style="color:black; font-size:18px;  "> Referral Doctor List </b> </center>
-                <c:if test="${not empty allDoctorAndRmpCommission}">
-                    <c:forEach items="${docDetailsList}" var="q" varStatus="index">
+                <c:if test="${not empty allPaidDoctorAndRmpCommission}">
+                    <c:forEach items="${paidDocDetailsList}" var="q" varStatus="index">
 
                     <center> <b style="font-size:18px;"> BILL </b> </br> 
                         Period :  <%= request.getParameter("sDate") %> - <%= request.getParameter("eDate") %>
@@ -201,7 +157,7 @@
 
                             <c:set var="netTotalReferal" value="${0.0}"/>
 
-                            <c:forEach items="${allDoctorAndRmpCommission}" var="d" >
+                            <c:forEach items="${allPaidDoctorAndRmpCommission}" var="d" >
                                 <c:if test="${q.id eq d.doctorId}" >
 
                                     <tr> 
@@ -214,11 +170,11 @@
                                         <td  align="center" class="a right"  >                                          	
                                             <fmt:formatNumber type="number" minFractionDigits="2"  value="${(d.discount/d.servicePrice)*100}" />
                                         </td> <!-- Percentage -->
-                                        <td  align="right" class="a right"> <c:if test="${d.billingStatus eq 'DUE'}">  DUE  </c:if>
-                                            <c:if test="${d.billingStatus eq 'FREE'}">  FREE  </c:if>
-                                            <c:if test="${d.billingStatus eq 'PAID'}">
+                                        <td  align="right" class="a right"> 
+                                       
+                                          
                                                 <fmt:formatNumber type="number" maxFractionDigits="3" value="${d.payablerefferralAmount}" /> 												
-                                            </c:if> 
+                                
                                         </td>     <!-- total referrel -->
                                     </tr>
 
@@ -262,8 +218,8 @@
 
         <c:if test="${docch eq '2'}">
             <center><b style="color:black; font-size:18px;  "> Referral CH List </b> </center>
-                <c:if test="${not empty allDoctorAndRmpCommission}">
-                    <c:forEach items="${rmpDetailsList}" var="q" varStatus="index">
+                <c:if test="${not empty allPaidDoctorAndRmpCommission}">
+                    <c:forEach items="${paidRmpDetailsList}" var="q" varStatus="index">
 
                     <center> <b style="font-size:18px;"> BILL </b> </br> 
                         Period :  <%= request.getParameter("sDate") %> - <%= request.getParameter("eDate") %>
@@ -291,7 +247,7 @@
 
                             <c:set var="netTotalReferal" value="${0.0}"/>
 
-                            <c:forEach items="${allDoctorAndRmpCommission}" var="d" >
+                            <c:forEach items="${allPaidDoctorAndRmpCommission}" var="d" >
                                 <c:if test="${q.id eq d.rmpId}" >
 
                                     <tr> 
@@ -304,11 +260,10 @@
                                         <td  align="center" class="a right"  >                                          	
                                             <fmt:formatNumber type="number" minFractionDigits="2"  value="${(d.discount/d.servicePrice)*100}" />
                                         </td> <!-- Percentage -->
-                                        <td  align="right" class="a right"> <c:if test="${d.billingStatus eq 'DUE'}">  DUE  </c:if>
-                                            <c:if test="${d.billingStatus eq 'FREE'}">  FREE  </c:if>
-                                            <c:if test="${d.billingStatus eq 'PAID'}">
+                                        <td  align="right" class="a right"> 
+                                  
                                                 <fmt:formatNumber type="number" maxFractionDigits="3" value="${d.payablerefferralAmount}" /> 												
-                                            </c:if> 
+                                           
                                         </td>     <!-- total referrel -->
                                     </tr>
 

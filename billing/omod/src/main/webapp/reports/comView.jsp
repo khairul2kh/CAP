@@ -102,7 +102,7 @@
         var note = jQuery("#note").val();
         var paid = jQuery("#paid").val();
         var due = jQuery("#due").val();
-		
+
 
         jQuery.ajax({
             type: "POST",
@@ -250,6 +250,9 @@
                         <c:set var="totalServicePrice" value="${0}"/> 
 
                         <c:forEach items="${diaComCal}" var="patient"  varStatus="index">
+						
+						 <c:if test="${patient.diaPatientServiceBill.billingStatus eq 'PAID'}">   
+						
                             <c:set var="doctorCommission" value="${patient.commission}"/>
                             <c:set var="servicePrice" value="${patient.servicePrice}"/>
                             <c:set var="actualRefferel" value="${ (servicePrice * doctorCommission)/100 }"/>
@@ -262,10 +265,10 @@
 
 
 
-                      
-							
-							
-							  <c:choose>
+
+
+
+                            <c:choose>
                                 <c:when test="${ commissionInPercentage == doctorCommission}">
                                     <c:set var="payable" value="${0 }"/>
 
@@ -278,7 +281,7 @@
                                     <c:set var="payable" value="${ actualRefferel-patientLessAmount}"/>
 
                                 </c:when>						
-								
+
                                 <c:when test="${ commissionInPercentage <= 20 }">
                                     <c:set var="payable" value="${ (actualRefferel-(patientLessAmount/2))}"/>
 
@@ -287,6 +290,8 @@
 
                                 </c:otherwise>
                             </c:choose>
+							
+							
 
 
 
@@ -329,6 +334,8 @@
                             </tr>
                             <c:set var="totalPayable" value="${totalPayable + payable}"/>
                             <c:set var="totalServicePrice" value="${totalServicePrice + servicePrice }"/>
+							
+							</c:if>
                         </c:forEach>
 
                     </tbody>
@@ -342,7 +349,7 @@
 </div>
 <br>
 <c:if test="${not empty diaComCal}">
-    <c:set var="totalPayable" value=" ${totalPayable+((totalPayable%1>0.5)?(1-(totalPayable%1))%1:-(totalPayable%1))}"/>
+    <c:set var="totalPayable" value=" ${totalPayable+((totalPayable%1>0.49)?(1-(totalPayable%1))%1:-(totalPayable%1))}"/>
 
     <div  style="margin-left:100px;">
 
@@ -432,6 +439,9 @@
                     <c:set var="totalDiscountAmount" value="${0}"/>
 
                     <c:forEach items="${diaComCal}" var="patient"  varStatus="index">
+					
+					 <c:if test="${patient.diaPatientServiceBill.billingStatus eq 'PAID'}">  
+					
                         <c:set var="doctorCommission" value="${patient.commission}"/>
                         <c:set var="servicePrice" value="${patient.servicePrice}"/>
                         <c:set var="actualRefferel" value="${ (servicePrice * doctorCommission)/100 }"/>
@@ -441,8 +451,8 @@
                         <c:set var="twenty"><fmt:parseNumber  type="number"    value="${20.00}" /> </c:set>
 
                         <c:set var="commissionInPercentage" value="${ (patientLessAmount /serPri)*100 }"/>
-
-
+                        <!--
+                        
                         <c:if test="${commissionInPercentage >= doctorCommission }">
                             <c:set var="payable" value="${0.00}"/>
                         </c:if>
@@ -454,6 +464,29 @@
                         <c:if test="${commissionInPercentage <= 20 }">
                             <c:set var="payable" value="${actualRefferel-(patientLessAmount/2)}"/>
                         </c:if>
+                        -->
+                        <c:choose>
+                            <c:when test="${ commissionInPercentage == doctorCommission}">
+                                <c:set var="payable" value="${0 }"/>
+
+                            </c:when>
+                            <c:when test="${ commissionInPercentage > doctorCommission}">
+                                <c:set var="payable" value="${0 }"/>
+
+                            </c:when>
+                            <c:when test="${ commissionInPercentage > 20}">
+                                <c:set var="payable" value="${ actualRefferel-patientLessAmount}"/>
+
+                            </c:when>						
+
+                            <c:when test="${ commissionInPercentage <= 20 }">
+                                <c:set var="payable" value="${ (actualRefferel-(patientLessAmount/2))}"/>
+
+                            </c:when>
+                            <c:otherwise>
+
+                            </c:otherwise>
+                        </c:choose>
 
                         <tr> 
                             <td   style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000;" >
@@ -475,8 +508,11 @@
 
                         <c:set var="totalRefferelAmount" value="${ totalRefferelAmount + actualRefferel}"/> 
                         <c:set var="totalDiscountAmount" value="${totalDiscountAmount + patientLessAmount}"/>
+						
+						 </c:if>  
+						
                     </c:forEach>
-                    <c:set var="totalPayable" value=" ${totalPayable+((totalPayable%1>0.5)?(1-(totalPayable%1))%1:-(totalPayable%1))}"/>
+                    <c:set var="totalPayable" value=" ${totalPayable+((totalPayable%1>0.49)?(1-(totalPayable%1))%1:-(totalPayable%1))}"/>
                     <tr > <td colspan="4" style="padding-left: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; " >
                             <span style="display: block;   text-align: right; padding-right:15px; font-size:16px; font-weight:bold; color:#000;"> Total  </span> </td>
                         <td  style="padding-right: 5px; border-bottom:1pt solid #000; border-right: 1px solid #000; text-align:right; font-size:14px;"  >  ${totalServicePrice} </td>

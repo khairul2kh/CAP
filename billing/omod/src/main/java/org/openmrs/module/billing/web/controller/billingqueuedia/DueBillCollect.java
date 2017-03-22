@@ -96,6 +96,8 @@ public class DueBillCollect {
             @RequestParam(value = "per", required = false) String discount,
             @RequestParam(value = "encounterId", required = false) String encounterId,
             HttpServletRequest request, Model model) throws ParseException {
+        
+        boolean isCommissionUpdated=false;
 
         Patient patient = Context.getPatientService().getPatient(patientId);
 
@@ -128,6 +130,7 @@ public class DueBillCollect {
         DiaPatientServiceBill dpsb = ms.getDiaPatientServiceBillId(billId);
         dpsb.setDueAmount(dueAmount);
         dpsb.setBillingStatus(due);
+        dpsb.setComStatus(Boolean.FALSE);
         dpsb.setDiscountAmount(totDis);
         ms.reSaveDia(dpsb);
 
@@ -171,12 +174,12 @@ public class DueBillCollect {
                     && ((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "6615")))) {
                 sername = servicename + "," + sername;  // for commison
             }
-
+                BigDecimal le = null;
             if (dpsb.getBillingStatus() == "PAID") {
 
                 BigDecimal oneHundred = new BigDecimal(100);
 
-                BigDecimal le = null;
+               
                 //  if (!StringUtils.equalsIgnoreCase(service.getCommission(), "0")) {
                 if (((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "5678")))
                         && ((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "6615")))) {
@@ -199,17 +202,18 @@ public class DueBillCollect {
 
                     servicePrice = servicePrice.add(unitPrice);
                 }
-                // if (!StringUtils.equalsIgnoreCase(service.getCommission(), "0")) {
+    
                 if (((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "5678")))
-                        && ((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "6615")))) {
+                        && ((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "6615")))
+                        && (dpsb.getBillId()<1504)
+                        ) {
 
-                    DiaCommissionCal diaComCal = new DiaCommissionCal();
+                     DiaCommissionCal diaComCal = new DiaCommissionCal();
                     diaComCal.setDiaPatientServiceBill(dpsb);
                     diaComCal.setPatient(patient);
                     diaComCal.setServiceName(service.getName());
                     diaComCal.setServiceId(service.getServiceId());
                     diaComCal.setServicePrice(unitPrice);
-                    //diaComCal.setLessAmount(discountAmount);
                     diaComCal.setLessAmount(le);
                     diaComCal.setCommission(service.getCommission());
                     diaComCal.setCreatedDate(new Date());
@@ -217,8 +221,39 @@ public class DueBillCollect {
                     diaComCal.setRefId(refDocId);  ////
                     diaComCal.setRefRmpId(rmpId);
                     ms.saveDiaComCal(diaComCal);
+                    
+                    isCommissionUpdated=true;
+                   
                 }
             }
+            
+  if(!isCommissionUpdated){
+     BigDecimal oneHundred = new BigDecimal(100);
+                if (((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "5678")))
+                        && ((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "6615")))) {
+                    if (!StringUtils.isBlank(discount)) {
+                        BigDecimal dis;
+                        dis = new BigDecimal(discount);
+                        BigDecimal less = (unitPrice.multiply(dis)).divide(oneHundred, 0,RoundingMode.HALF_EVEN);
+                        le = less;
+                    } else {
+                        le = new BigDecimal(0);
+                    }
+                }                 
+             
+            if(secLess !=null && le!= null){
+                DiaCommissionCal  commissionObjectToUpdate=   ms.getDiaCommissionCalByServiceIdAndBillId(service.getServiceId(),dpsb.getBillId());
+                if(commissionObjectToUpdate!=null){
+                   commissionObjectToUpdate.setLessAmount(le);              
+                ms.saveDiaComCal(commissionObjectToUpdate);
+                }
+             
+            } 
+  
+  }
+              
+            
+          
         }
         if (sername != null) {
             DiaCommissionCalAll diaAll = ms.getDiaAllByBillId(billId);

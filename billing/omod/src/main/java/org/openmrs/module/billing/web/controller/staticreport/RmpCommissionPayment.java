@@ -85,7 +85,7 @@ public class RmpCommissionPayment {
             }
 
             model.addAttribute("listBillId", listBillId);
-          //  System.out.println("**Group**" + listBillIdGroup);
+            //  System.out.println("**Group**" + listBillIdGroup);
             // System.out.println("**Singel**" + listBillId);
         }
 
@@ -167,20 +167,13 @@ public class RmpCommissionPayment {
         diaRmpAdj.setCreatedDate(new Date());
         ms.saveDiaRmpAdj(diaRmpAdj);
 
-        List<DiaCommissionCal> diaRmpComCal = ms.getDiaComCalRmpPay(comId, startDate, endDate);
-
-        // List<DiaCommissionCal> diaList = ms.getDiaComCalByBillId(comID); //  Get By Ref Id then save it
-        for (int i = 0; i < diaRmpComCal.size(); i++) {
-            DiaCommissionCal d = (DiaCommissionCal) diaRmpComCal.get(i);
-            d.setStatus(Boolean.TRUE);
-            d.setDiaRmpComPaid(drmp);
-            ms.saveDiaComCal(d);
-        }
-
         for (int x = 0; x < billID.length; x++) {
             Integer a = Integer.parseInt(billID[x]);
 
             DiaPatientServiceBill diaSer = ms.getDiaPatientServiceBillId(a);
+            
+             if(diaSer.getBillingStatus().trim().equals("PAID")){
+            
             diaSer.setComStatus(Boolean.TRUE);
             ms.saveDiaPatientServiceBill(diaSer);
 
@@ -189,7 +182,19 @@ public class RmpCommissionPayment {
             ms.saveDiaComAll(dAll);
 
             System.out.println("***bill id*****" + a);
+             }
+        }
 
+        List<DiaCommissionCal> diaRmpComCal = ms.getDiaComCalRmpPay(comId, startDate, endDate);
+
+        // List<DiaCommissionCal> diaList = ms.getDiaComCalByBillId(comID); //  Get By Ref Id then save it
+        for (int i = 0; i < diaRmpComCal.size(); i++) {
+            DiaCommissionCal d = (DiaCommissionCal) diaRmpComCal.get(i);
+            if (d.getDiaPatientServiceBill().getBillingStatus().trim().equals("PAID")) {
+                d.setStatus(Boolean.TRUE);
+                d.setDiaRmpComPaid(drmp);
+                ms.saveDiaComCal(d);
+            }
         }
 
         return "module/billing/reports/rmpComView";

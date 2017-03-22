@@ -289,7 +289,7 @@ public class BillingService {
             }
 
             // bg3=bg1.add(bg2);
-            if (dpsb.getBillingStatus() == "PAID") {
+            if (dpsb.getBillingStatus() != "FREE") {
                 // if (!StringUtils.equalsIgnoreCase(service.getCommission(), "0")) {
                 if (((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "5678")))
                         && ((!StringUtils.equalsIgnoreCase(service.getCategory().getId().toString(), "6615")))) {

@@ -306,9 +306,13 @@
             </tr>
         </c:forEach>
         </tr>
-        <c:if test="${not empty dpsb.comment}">	<tr style="border-bottom:1pt solid #999; font-size:13px;" >
+    <!--    
+                
+    <c:if test="${not empty dpsb.comment}">	<tr style="border-bottom:1pt solid #999; font-size:13px;" >
                 <td colspan="3"> Remarks : ${dpsb.comment}  </td> 
-            </tr> </c:if>
+            </tr> 
+        </c:if>
+    -->
             <tr> 
                 <td colspan="2" style="color:black; padding:7px 0 0 0 ; "> <b> Delivery Date :  &nbsp; <%= request.getParameter("dDate")%>  
                     <span class="printfont" > &nbsp; <%= request.getParameter("dTime")%></span> </b>
